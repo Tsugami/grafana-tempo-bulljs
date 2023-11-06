@@ -1,9 +1,36 @@
 version: "3.9"
 
 services:
-  redis_bullmq:
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    command: ["node", "server.js"]
+    depends_on:
+      - redis
+      - jaeger
+  worker:
+    build: ./backend
+    container_name: worker
+    command: ["node", "worker.js"]
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      - redis
+      - jaeger
+  redis:
     image: redis:latest
-    container_name: redis_bullmq
+    container_name: redis
     restart: always
     ports:
       - 6379:6379
@@ -22,19 +49,19 @@ services:
   otel:
     container_name: otel-collector
     image: otel/opentelemetry-collector-contrib:0.86.0
-    command: [ "--config=/etc/otelcol-contrib/config.yml"]
+    command: ["--config=/etc/otelcol-contrib/config.yml"]
     volumes:
       - ./otel-collector-config.yml:/etc/otelcol-contrib/config.yml
       # - ./otel-collector-config.yml:/etc/otelcol-contrib/config.yaml
       # - ./otel-collector-config.yml:/etc/otelcol/config.yaml
     ports:
-    - 1888:1888 # pprof extension
-    - 8888:8888 # Prometheus metrics exposed by the Collector
-    - 8889:8889 # Prometheus exporter metrics
-    - 13133:13133 # health_check extension
-    - 4317:4317 # OTLP gRPC receiver
-    - 4318:4318 # OTLP http receiver
-    - 55679:55679 # zpages extension
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      # - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension
     environment:
       - JAEGER_ENDPOINT=jaeger:4317
     depends_on:
@@ -44,8 +71,15 @@ services:
     image: jaegertracing/all-in-one:1.47
     ports:
       - 16686:16686 # Jaeger UI
-      - "4317" # OTLP gRPC default port
+      - 4317:4317 # OTLP gRPC default port
+      - 14268:14268
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - 8080:80
 volumes:
   grafana_data:

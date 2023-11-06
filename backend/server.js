@@ -4,7 +4,8 @@ const Fastify = require("fastify");
 const { Queue } = require("bullmq");
 const config = require("./config");
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT ?? 3001;
+const ADDRESS = process.env.ADDRESS ?? "localhost";
 
 const queue = new Queue(config.queue.name, { connection: config.redis });
 
@@ -40,7 +41,7 @@ fastify.post("/add", async function handler() {
 
 (async () => {
   try {
-    await fastify.listen({ port: PORT });
+    await fastify.listen({ port: PORT, host: ADDRESS });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

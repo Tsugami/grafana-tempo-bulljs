@@ -33,12 +33,12 @@ const sdk = new NodeSDK({
   resource: new Resource({
     [SemanticResourceAttributes.SERVICE_NAME]: "SERVER",
   }),
-  traceExporter: new HTTPOTLPTraceExporter({
+  traceExporter: new OTLPTraceExporter({
     // url: "http://localhost:4318/v1/traces",
   }),
-  // metricReader: new PeriodicExportingMetricReader({
-  //   exporter: new OTLPMetricExporter(),
-  // }),
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter(),
+  }),
   instrumentations: [
     getNodeAutoInstrumentations(),
     new BullMQInstrumentation(),
