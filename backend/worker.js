@@ -2,8 +2,8 @@ require('./instrumentation');
 
 const { Worker } = require("bullmq");
 const config = require("./config");
+const { delay } = require('./util');
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const worker = new Worker(
   config.queue.name,

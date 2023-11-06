@@ -3,6 +3,7 @@ require("./instrumentation");
 const Fastify = require("fastify");
 const { Queue } = require("bullmq");
 const config = require("./config");
+const { randomColor } = require("./util");
 
 const PORT = process.env.PORT ?? 3001;
 const ADDRESS = process.env.ADDRESS ?? "localhost";
@@ -17,26 +18,19 @@ fastify.get("/", async function handler() {
   return { hello: "world" };
 });
 
-fastify.post("/add", async function handler() {
+fastify.post("/add", async function handler(req, res) {
   const id = Math.random().toString(36).substring(7);
-  const colors = [
-    "red",
-    "green",
-    "blue",
-    "yellow",
-    "black",
-    "white",
-    "pink",
-    "purple",
-    "orange",
-    "brown",
-  ];
-
-  const color = colors[Math.floor(Math.random() * colors.length)];
-
+  const color = await randomColor();
   queue.add("cars", { color, id });
 
   return { id };
+});
+
+fastify.get("/colors/random", async function handler(_request, reply) {
+  const color = await randomColor();
+  reply.header("cache-control", "max-age=31536000, public");
+
+  return { color };
 });
 
 (async () => {

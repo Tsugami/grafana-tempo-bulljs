@@ -106,7 +106,6 @@ services:
       #   - "9095:9095" # tempo grpc
       #   - "4318:4318" # otlp http
       #   - "9411:9411" # zipkin
-
 volumes:
   grafana_data:
   tempo_data:
