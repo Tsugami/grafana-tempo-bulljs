@@ -3,6 +3,7 @@
     "@jenniferplusplus/opentelemetry-instrumentation-bullmq": "^0.3.1",
     "@opentelemetry/api": "^1.6.0",
     "@opentelemetry/auto-instrumentations-node": "^0.39.4",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "^0.44.0",
     "@opentelemetry/exporter-metrics-otlp-http": "^0.44.0",
     "@opentelemetry/exporter-trace-otlp-grpc": "^0.44.0",
     "@opentelemetry/exporter-trace-otlp-http": "^0.44.0",

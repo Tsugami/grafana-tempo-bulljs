@@ -17,11 +17,14 @@ const {
   OTLPTraceExporter,
 } = require("@opentelemetry/exporter-trace-otlp-grpc");
 const {
-  OTLPTraceExporter: HTTPOTLPTraceExporter,
+  OTLPTraceExporter: HttpOTLPTraceExporter,
 } = require("@opentelemetry/exporter-trace-otlp-http");
-
 const {
   OTLPMetricExporter,
+} = require("@opentelemetry/exporter-metrics-otlp-grpc");
+
+const {
+  OTLPMetricExporter: HttpOTLPMetricExporter,
 } = require("@opentelemetry/exporter-metrics-otlp-http");
 // const { ConsoleSpanExporter } = require("@opentelemetry/sdk-trace-node");
 
