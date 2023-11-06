@@ -1,0 +1,30 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  debug:
+  logging:
+  otlp/jaeger:
+    endpoint: "${env:JAEGER_ENDPOINT}"
+    tls:
+      insecure: true
+
+  # otlp:
+  #   endpoint: tempo:4317
+  #   tls:
+  #     insecure: true
+    
+processors:
+  batch:
+    
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      exporters: [debug, logging]
+    traces:
+      receivers: [otlp]
+      exporters: [debug, logging, otlp/jaeger]
