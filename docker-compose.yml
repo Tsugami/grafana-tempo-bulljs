@@ -17,7 +17,7 @@ services:
     command: ["node", "server.js"]
     depends_on:
       - redis
-      - jaeger
+      - otel
   worker:
     build: ./backend
     container_name: worker
@@ -31,7 +31,7 @@ services:
       - OTEL_LOG_LEVEL=ERROR
     depends_on:
       - redis
-      - jaeger
+      - otel
   redis:
     image: redis:latest
     container_name: redis
@@ -61,13 +61,13 @@ services:
     volumes:
       - ./otel-collector-config.yml:/etc/otelcol-contrib/config.yml
     ports:
-      - 1888:1888 # pprof extension
-      - 8888:8888 # Prometheus metrics exposed by the Collector
-      - 8889:8889 # Prometheus exporter metrics
-      - 13133:13133 # health_check extension
-      - 4317:4317 # OTLP gRPC receiver
-      - 4318:4318 # OTLP http receiver
-      - 55679:55679 # zpages extension
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP http receiver
+      # - 1888:1888 # pprof extension
+      # - 8888:8888 # Prometheus metrics exposed by the Collector
+      # - 8889:8889 # Prometheus exporter metrics
+      # - 13133:13133 # health_check extension
+      # - 55679:55679 # zpages extension
     environment:
       - JAEGER_ENDPOINT=jaeger:4317
       - TEMPO_OTLP_ENDPOINT=${TEMPO_OTLP_ENDPOINT}
@@ -77,6 +77,7 @@ services:
       - TEMPO_CLOUD_OTLP_ENDPOINT=${TEMPO_CLOUD_OTLP_ENDPOINT}
     depends_on:
       - jaeger
+      - grafana_tempo
   jaeger:
     container_name: jaeger
     image: jaegertracing/all-in-one:1.47
@@ -92,6 +93,10 @@ services:
     restart: always
     ports:
       - 8080:80
+    depends_on:
+      - grafana
+      - backend
+      - worker
   grafana_tempo:
     container_name: grafana_tempo
     image: grafana/tempo:latest
