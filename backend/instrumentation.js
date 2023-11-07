@@ -16,10 +16,6 @@ const {
 const {
   OTLPTraceExporter,
 } = require("@opentelemetry/exporter-trace-otlp-grpc");
-const { Resource } = require("@opentelemetry/resources");
-const {
-  SemanticResourceAttributes,
-} = require("@opentelemetry/semantic-conventions");
 const {
   OTLPTraceExporter: HTTPOTLPTraceExporter,
 } = require("@opentelemetry/exporter-trace-otlp-http");
@@ -30,9 +26,6 @@ const {
 // const { ConsoleSpanExporter } = require("@opentelemetry/sdk-trace-node");
 
 const sdk = new NodeSDK({
-  resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: "backend",
-  }),
   traceExporter: new OTLPTraceExporter({
     // url: "http://localhost:4318/v1/traces",
   }),

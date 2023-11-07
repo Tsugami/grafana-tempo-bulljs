@@ -14,7 +14,10 @@ exporters:
     endpoint: "${env:TEMPO_OTLP_ENDPOINT}"
     tls:
       insecure: true
-    
+  otlp/tempo_cloud:
+    endpoint: "${env:TEMPO_CLOUD_OTLP_ENDPOINT}"
+    headers:
+      authorization: Basic ${env:TEMPO_CLOUD_BASIC_AUTH}
 processors:
   batch:
     
@@ -25,4 +28,4 @@ service:
       exporters: [debug]
     traces:
       receivers: [otlp]
-      exporters: [debug, otlp/jaeger, otlp/tempo]
+      exporters: [debug, otlp/jaeger, otlp/tempo, otlp/tempo_cloud]
