@@ -6,16 +6,14 @@ receivers:
 
 exporters:
   debug:
-  logging:
   otlp/jaeger:
     endpoint: "${env:JAEGER_ENDPOINT}"
     tls:
       insecure: true
-
-  # otlp:
-  #   endpoint: tempo:4317
-  #   tls:
-  #     insecure: true
+  otlp/tempo:
+    endpoint: "${env:TEMPO_OTLP_ENDPOINT}"
+    tls:
+      insecure: true
     
 processors:
   batch:
@@ -24,7 +22,7 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      exporters: [debug, logging]
+      exporters: [debug]
     traces:
       receivers: [otlp]
-      exporters: [debug, logging, otlp/jaeger]
+      exporters: [debug, otlp/jaeger, otlp/tempo]
